@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="Videodromm-Warps"
+	id="com.videodromm.Videodromm-Warps"
+	author="Bruce Lane"
+	license="GNU AFFERO GENERAL PUBLIC LICENSE"
+    version="1.0"
+	summary="Videodromm block for Cinder 0.9"
+	url="https://github.com/Videodromm/Cinder-Videodromm-Warps"
+	git="git://github.com/Videodromm/Cinder-Videodromm-Warps.git"
+	>
+	<requires>nl.cowlumbus.warping</requires>
+	<supports os="msw" />
+  	<supports os="macosx" />
+    <supports os="ios" />
+	<includePath>include</includePath>
+	<includePath>src</includePath>
+	<headerPattern>include/*.h</headerPattern>
+	<sourcePattern>src/*.cpp</sourcePattern>
+	<sourcePattern>src/*.c</sourcePattern>
+	<platform os="msw">
+		<libraryPath>lib</libraryPath>
+	</platform>
+</block>
+<template>templates/Videodromm-Warps/template.xml</template>
+</cinder>
