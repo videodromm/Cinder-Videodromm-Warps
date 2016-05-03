@@ -1,4 +1,4 @@
-#include "VDMix.h"
+#include "VDWarp.h"
 
 #include "cinder/gl/Texture.h"
 #include "cinder/Xml.h"
@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDMix::VDMix(MixType aType)
+	VDWarp::VDWarp(MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -90,26 +90,26 @@ namespace VideoDromm {
 			CI_LOG_V("unable to load mixfbo fragment shader:" + string(e.what()));
 		}
 	}
-	VDMix::~VDMix(void) {
+	VDWarp::~VDWarp(void) {
 
 	}
-	int VDMix::loadFboFragmentShader(string aFilePath, bool right)
+	int VDWarp::loadFboFragmentShader(string aFilePath, bool right)
 	{
 		return mFbos[0]->loadPixelFragmentShader(aFilePath);// TODO right or left
 	}
 
-	VDMixList VDMix::readSettings(const DataSourceRef &source)
+	VDWarpList VDWarp::readSettings(const DataSourceRef &source)
 	{
 		XmlTree			doc;
-		VDMixList	VDMixlist;
+		VDWarpList	VDWarplist;
 
 		// try to load the specified xml file
 		try { doc = XmlTree(source); }
-		catch (...) { return VDMixlist; }
+		catch (...) { return VDWarplist; }
 
 		// check if this is a valid file 
 		bool isOK = doc.hasChild("mixes");
-		if (!isOK) return VDMixlist;
+		if (!isOK) return VDWarplist;
 
 		//
 		if (isOK) {
@@ -123,18 +123,18 @@ namespace VideoDromm {
 				XmlTree detailsXml = child->getChild("details");
 
 				if (mixtype == "mix") {
-					VDMixRef t(new VDMix());
+					VDWarpRef t(new VDWarp());
 					t->fromXml(detailsXml);
-					VDMixlist.push_back(t);
+					VDWarplist.push_back(t);
 				}
 
 			}
 		}
 
-		return VDMixlist;
+		return VDWarplist;
 	}
 
-	void VDMix::writeSettings(const VDMixList &VDMixlist, const ci::DataTargetRef &target) {
+	void VDWarp::writeSettings(const VDWarpList &VDWarplist, const ci::DataTargetRef &target) {
 
 		// create config document and root <textures>
 		XmlTree			doc;
@@ -142,17 +142,17 @@ namespace VideoDromm {
 		doc.setAttribute("version", "1.0");
 
 		// 
-		for (unsigned int i = 0; i < VDMixlist.size(); ++i) {
+		for (unsigned int i = 0; i < VDWarplist.size(); ++i) {
 			// create <texture>
 			XmlTree			mix;
 			mix.setTag("mix");
 			mix.setAttribute("id", i + 1);
-			switch (VDMixlist[i]->mType) {
+			switch (VDWarplist[i]->mType) {
 			case MIX: mix.setAttribute("mixtype", "mix"); break;
 			default: mix.setAttribute("mixtype", "unknown"); break;
 			}
 			// details specific to texture type
-			mix.push_back(VDMixlist[i]->toXml());
+			mix.push_back(VDWarplist[i]->toXml());
 
 			// add fbo to doc
 			doc.push_back(mix);
@@ -161,7 +161,7 @@ namespace VideoDromm {
 		// write file
 		doc.write(target);
 	}
-	XmlTree	VDMix::toXml() const
+	XmlTree	VDWarp::toXml() const
 	{
 		XmlTree		xml;
 		xml.setTag("details");
@@ -172,7 +172,7 @@ namespace VideoDromm {
 		return xml;
 	}
 
-	void VDMix::fromXml(const XmlTree &xml)
+	void VDWarp::fromXml(const XmlTree &xml)
 	{
 		mType = MIX;
 		// retrieve fbos specific to this mixfbo
@@ -189,7 +189,7 @@ namespace VideoDromm {
 		}
 
 	}
-	void VDMix::setPosition(int x, int y) {
+	void VDWarp::setPosition(int x, int y) {
 		mPosX = ((float)x / (float)mWidth) - 0.5;
 		mPosY = ((float)y / (float)mHeight) - 0.5;
 		for (auto &fbo : mFbos)
@@ -197,59 +197,59 @@ namespace VideoDromm {
 			fbo->setPosition(mPosX, mPosY);
 		}
 	}
-	void VDMix::setZoom(float aZoom) {
+	void VDWarp::setZoom(float aZoom) {
 		mZoom = aZoom;
 		for (auto &fbo : mFbos)
 		{
 			fbo->setZoom(mZoom);
 		}
 	}
-	int VDMix::getTextureWidth() {
+	int VDWarp::getTextureWidth() {
 		return mWidth;
 	};
 
-	int VDMix::getTextureHeight() {
+	int VDWarp::getTextureHeight() {
 		return mHeight;
 	};
-	unsigned int VDMix::getInputTexturesCount(unsigned int aFboIndex) {
+	unsigned int VDWarp::getInputTexturesCount(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getInputTexturesCount();
 	}
-	string VDMix::getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex) {
+	string VDWarp::getInputTextureName(unsigned int aFboIndex, unsigned int aTextureIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getInputTextureName(aTextureIndex);
 	}
-	string VDMix::getFboName(unsigned int aFboIndex) {
+	string VDWarp::getFboName(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getName();
 	}
-	int VDMix::getFboTextureWidth(unsigned int aFboIndex) {
+	int VDWarp::getFboTextureWidth(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getTextureWidth();
 	};
 
-	int VDMix::getFboTextureHeight(unsigned int aFboIndex) {
+	int VDWarp::getFboTextureHeight(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getTextureHeight();
 	};
 
-	ci::ivec2 VDMix::getSize() {
+	ci::ivec2 VDWarp::getSize() {
 		return mMixFbo->getSize();
 	}
 
-	ci::Area VDMix::getBounds() {
+	ci::Area VDWarp::getBounds() {
 		return mMixFbo->getBounds();
 	}
 
-	GLuint VDMix::getId() {
+	GLuint VDWarp::getId() {
 		return mMixFbo->getId();
 	}
 
-	std::string VDMix::getName(){
+	std::string VDWarp::getName(){
 		return mName;
 	}
 	// Render left FBO
-	void VDMix::renderLeftFbo()
+	void VDWarp::renderLeftFbo()
 	{
 		gl::ScopedFramebuffer fbScp(mLeftFbo);
 		// clear out the FBO with blue
@@ -264,7 +264,7 @@ namespace VideoDromm {
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
 	// Render left FBO
-	void VDMix::renderRightFbo()
+	void VDWarp::renderRightFbo()
 	{
 		gl::ScopedFramebuffer fbScp(mRightFbo);
 		// clear out the FBO with red
@@ -286,30 +286,30 @@ namespace VideoDromm {
 		}
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 	}
-	ci::gl::TextureRef VDMix::getRightFboTexture() {
+	ci::gl::TextureRef VDWarp::getRightFboTexture() {
 		return mLeftFbo->getColorTexture();
 	}
-	ci::gl::TextureRef VDMix::getLeftFboTexture() {
+	ci::gl::TextureRef VDWarp::getLeftFboTexture() {
 		return mRightFbo->getColorTexture();
 	}
-	void VDMix::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
+	void VDWarp::loadImageFile(string aFile, unsigned int aFboIndex, unsigned int aTextureIndex, bool right) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		mFbos[aFboIndex]->loadImageFile(aFile, aTextureIndex);
 
 	}
 
-	ci::gl::Texture2dRef VDMix::getFboTexture(unsigned int aFboIndex) {
+	ci::gl::Texture2dRef VDWarp::getFboTexture(unsigned int aFboIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getTexture();
 	}
-	ci::gl::Texture2dRef VDMix::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
+	ci::gl::Texture2dRef VDWarp::getFboInputTexture(unsigned int aFboIndex, unsigned int aFboInputTextureIndex) {
 		if (aFboIndex > mFbos.size() - 1) aFboIndex = mFbos.size() - 1;
 		return mFbos[aFboIndex]->getInputTexture(aFboInputTextureIndex);
 	}
-	void VDMix::setCrossfade(float aCrossfade) {
+	void VDWarp::setCrossfade(float aCrossfade) {
 		mVDSettings->controlValues[21] = aCrossfade;
 	}
-	ci::gl::TextureRef VDMix::getTexture() {
+	ci::gl::TextureRef VDWarp::getTexture() {
 		renderLeftFbo();
 		renderRightFbo();
 		iChannelResolution0 = vec3(mPosX, mPosY, 0.5);

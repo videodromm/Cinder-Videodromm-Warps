@@ -24,18 +24,18 @@ using namespace VideoDromm;
 
 namespace VideoDromm
 {
-	// stores the pointer to the VDMix instance
-	typedef std::shared_ptr<class VDMix> 	VDMixRef;
-	typedef std::vector<VDMixRef>			VDMixList;
+	// stores the pointer to the VDWarp instance
+	typedef std::shared_ptr<class VDWarp> 	VDWarpRef;
+	typedef std::vector<VDWarpRef>			VDWarpList;
 
-	class VDMix : public std::enable_shared_from_this < VDMix > {
+	class VDWarp : public std::enable_shared_from_this < VDWarp > {
 	public:
 		typedef enum { MIX } MixType;
-		VDMix(MixType aType = MIX);
-		~VDMix(void);
-		static VDMixRef create() { return std::make_shared<VDMix>(); }
+		VDWarp(MixType aType = MIX);
+		~VDWarp(void);
+		static VDWarpRef create() { return std::make_shared<VDWarp>(); }
 		//! returns a shared pointer to this fbo
-		VDMixRef						getPtr() { return shared_from_this(); }
+		VDWarpRef						getPtr() { return shared_from_this(); }
 		ci::ivec2						getSize();
 		ci::Area						getBounds();
 		GLuint							getId();
@@ -52,10 +52,10 @@ namespace VideoDromm
 		void							fromXml(const ci::XmlTree &xml);
 		//!
 		XmlTree							toXml() const;
-		//! read a xml file and pass back a vector of VDMixs
-		static VDMixList				readSettings(const ci::DataSourceRef &source);
+		//! read a xml file and pass back a vector of VDWarps
+		static VDWarpList				readSettings(const ci::DataSourceRef &source);
 		//! write a xml file
-		static void						writeSettings(const VDMixList &VDMixlist, const ci::DataTargetRef &target);
+		static void						writeSettings(const VDWarpList &VDWarplist, const ci::DataTargetRef &target);
 		// move, rotate, zoom methods
 		void							setPosition(int x, int y);
 		void							setZoom(float aZoom);
