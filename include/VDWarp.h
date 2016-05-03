@@ -9,18 +9,13 @@
 #include "cinder/Log.h"
 #include "cinder/Timeline.h"
 
-// Settings
-#include "VDSettings.h"
-// Fbos
-#include "VDFbo.h"
-
 #include <atomic>
 #include <vector>
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-using namespace VideoDromm;
+//using namespace VideoDromm;
 
 namespace VideoDromm
 {
@@ -30,7 +25,7 @@ namespace VideoDromm
 
 	class VDWarp : public std::enable_shared_from_this < VDWarp > {
 	public:
-		typedef enum { MIX } MixType;
+		/*typedef enum { MIX } MixType;
 		VDWarp(MixType aType = MIX);
 		~VDWarp(void);
 		static VDWarpRef create() { return std::make_shared<VDWarp>(); }
@@ -108,6 +103,6 @@ namespace VideoDromm
 		VDFboList						mFbos;
 		fs::path						mFbosFilepath;
 		//! Shaders
-		string							mMixShaderName;
+		string							mMixShaderName;*/
 	};
 }

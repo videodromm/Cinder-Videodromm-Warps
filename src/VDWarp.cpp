@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 
 namespace VideoDromm {
-	VDWarp::VDWarp(MixType aType)
+/*	VDWarp::VDWarp(MixType aType)
 		: mFbosPath("fbos.xml")
 		, mName("")
 		, mFlipV(false)
@@ -382,5 +382,5 @@ namespace VideoDromm {
 
 		gl::drawSolidRect(Rectf(0, 0, mWidth, mHeight));
 		return mMixFbo->getColorTexture();
-	}
+	}*/
 } // namespace VideoDromm
